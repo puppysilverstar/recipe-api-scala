@@ -5,6 +5,7 @@ import play.api.mvc._
 import play.api.libs.json._
 import models.Recipe
 import scala.collection.mutable
+import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicLong
 
 @Singleton
@@ -15,18 +16,12 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
 
   def createRecipe: Action[JsValue] = Action(parse.json) { request =>
     request.body.validate[Recipe].fold(
-      _ => BadRequest(Json.obj(
-        "message" -> "Recipe creation failed!",
-        "required" -> "title, making_time, serves, ingredients, cost"
-      )),
+      errors => BadRequest(Json.obj("message" -> "Recipe creation failed!", "required" -> "title, making_time, serves, ingredients, cost")),
       data => {
         val id = idCounter.getAndIncrement()
         val recipeWithId = data.copy(id = Some(id))
         recipes += (id -> recipeWithId)
-        Ok(Json.obj(
-          "message" -> "Recipe successfully created!",
-          "recipe" -> Seq(recipeWithId)
-        ))
+        Ok(Json.obj("message" -> "Recipe successfully created!", "recipe" -> Seq(recipeWithId)))
       }
     )
   }
@@ -37,10 +32,8 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
 
   def getRecipeById(id: Long): Action[AnyContent] = Action {
     recipes.get(id) match {
-      case Some(recipe) =>
-        Ok(Json.obj("message" -> "Recipe details by id", "recipe" -> Seq(recipe)))
-      case None =>
-        NotFound(Json.obj("message" -> "No recipe found"))
+      case Some(recipe) => Ok(Json.obj("message" -> "Recipe details by id", "recipe" -> Seq(recipe)))
+      case None => NotFound(Json.obj("message" -> "No recipe found"))
     }
   }
 
@@ -53,8 +46,7 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
             val updatedRecipe = data.copy(id = Some(id))
             recipes.update(id, updatedRecipe)
             Ok(Json.obj("message" -> "Recipe successfully updated!", "recipe" -> Seq(updatedRecipe)))
-          case None =>
-            NotFound(Json.obj("message" -> "No recipe found"))
+          case None => NotFound(Json.obj("message" -> "No recipe found"))
         }
       }
     )
