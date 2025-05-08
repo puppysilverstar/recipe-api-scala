@@ -6,5 +6,4 @@ COPY . .
 
 RUN sbt compile stage
 
-CMD ["target/universal/stage/bin/recipe-api", "-Dplay.http.secret.key=" + System.getenv("PLAY_SECRET")]
-
+CMD bash -c 'target/universal/stage/bin/recipe-api -Dplay.http.secret.key=$PLAY_SECRET'
