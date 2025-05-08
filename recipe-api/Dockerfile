@@ -6,4 +6,5 @@ COPY . .
 
 RUN sbt compile stage
 
-CMD ["target/universal/stage/bin/recipe-api", "-Dplay.http.secret.key=secret"]
+CMD ["target/universal/stage/bin/recipe-api", "-Dplay.http.secret.key=" + System.getenv("PLAY_SECRET")]
+
