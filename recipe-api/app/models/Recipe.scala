@@ -8,7 +8,7 @@ case class Recipe(
   making_time: String,
   serves: String,
   ingredients: String,
-  cost: String
+  cost: Int
 )
 
 object Recipe {
