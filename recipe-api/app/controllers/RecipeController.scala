@@ -16,7 +16,12 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
 
   def createRecipe: Action[JsValue] = Action(parse.json) { request =>
     request.body.validate[Recipe].fold(
-      errors => BadRequest(Json.obj("message" -> "Recipe creation failed!", "required" -> "title, making_time, serves, ingredients, cost")),
+      errors =>{
+         Ok(Json.obj(
+          "message" -> "Recipe creation failed!",
+          "required" -> "title, making_time, serves, ingredients, cost"
+        ))
+      },
       data => {
         val id = idCounter.getAndIncrement()
         val recipeWithId = data.copy(id = Some(id))
