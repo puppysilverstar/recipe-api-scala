@@ -15,20 +15,20 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
   private val idCounter = new AtomicLong(1)
 
   def createRecipe: Action[JsValue] = Action(parse.json) { request =>
-      request.body.validate[Recipe].fold(
-        errors => {
-          Ok(Json.obj(
-            "message" -> "Recipe creation fail!",
-            "required" -> "title, making_time, serves, ingredients, cost"
-          ))
-        },
-        data => {
-          val id = idCounter.getAndIncrement()
-          val recipeWithId = data.copy(id = Some(id))
-          recipes += (id -> recipeWithId)
-          Ok(Json.obj("message" -> "Recipe successfully created!", "recipe" -> Seq(recipeWithId)))
-        }
-      )
+    request.body.validate[Recipe].fold(
+      errors =>{
+         Ok(Json.obj(
+          "message" -> "Recipe creation failed!",
+          "required" -> "title, making_time, serves, ingredients, cost"
+        ))
+      },
+      data => {
+        val id = idCounter.getAndIncrement()
+        val recipeWithId = data.copy(id = Some(id))
+        recipes += (id -> recipeWithId)
+        Ok(Json.obj("message" -> "Recipe successfully created!", "recipe" -> Seq(recipeWithId)))
+      }
+    )
   }
 
   def getRecipes: Action[AnyContent] = Action {
