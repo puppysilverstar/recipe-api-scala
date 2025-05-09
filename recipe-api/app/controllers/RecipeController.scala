@@ -15,11 +15,10 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
   private val idCounter = new AtomicLong(1)
 
   def createRecipe: Action[JsValue] = Action(parse.json) { request =>
-    try {
       request.body.validate[Recipe].fold(
         errors => {
           Ok(Json.obj(
-            "message" -> "Recipe creation failed!",
+            "message" -> "Recipe creation fail!",
             "required" -> "title, making_time, serves, ingredients, cost"
           ))
         },
@@ -30,13 +29,6 @@ class RecipeController @Inject()(val controllerComponents: ControllerComponents)
           Ok(Json.obj("message" -> "Recipe successfully created!", "recipe" -> Seq(recipeWithId)))
         }
       )
-    } catch {
-      case ex: Exception =>
-        Ok(Json.obj(
-          "message" -> "Recipe creation failed!",
-          "required" -> "title, making_time, serves, ingredients, cost"
-        ))
-    }
   }
 
   def getRecipes: Action[AnyContent] = Action {
